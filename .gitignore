@@ -58,3 +58,8 @@ target/
 
 # ide
 .idea/
+
+# liEclipse
+.project
+.pydevproject
+.settings/
