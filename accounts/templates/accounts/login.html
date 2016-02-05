@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ImpaQTO | Login </title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/bootstrap.min.css' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/font-awesome/css/font-awesome.css' %}" >
+
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/animate.css' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/style.css' %}" >
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="loginColumns animated fadeInDown">
+        <div class="row">
+
+            <div class="col-md-6">
+                <h2 class="font-bold">Bienvenido a ImpaQTO</h2>
+
+                <p>
+                    Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
+                </p>
+
+                <p>
+                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+                </p>
+
+                <p>
+                    <small>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</small>
+                </p>
+
+            </div>
+            <div class="col-md-6">
+                <div class="ibox-content">
+                    <form class="m-t" role="form" method="post" action="">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" id="username" class="form-control" placeholder="Username" name="username" value="{{ username }}" required="">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="password" class="form-control" placeholder="Password" name="password" required="">
+                        </div>
+                        <button type="submit" class="btn btn-primary block full-width m-b">Ingresar</button>
+                        
+                    </form>
+                    <p class="text-muted text-center">
+                        {% if mensaje %}
+                            <div class="alert alert-danger">
+                                {{ mensaje }}
+                            </div>
+                        {% endif %}
+                    </p>
+                    <p class="m-t">
+                        <small>Powered by Vimeworks Cia. Ltd. &copy; 2016</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-6">
+                Copyright © ImpQTO 
+            </div>
+            <div class="col-md-6 text-right">
+               <small>2016-2017</small>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

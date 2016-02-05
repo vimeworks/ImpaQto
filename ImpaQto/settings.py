@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.conf.global_settings import LOGIN_URL, LOGOUT_URL, MEDIA_ROOT,\
+    MEDIA_URL, AUTH_USER_MODEL
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -37,7 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'web',
+    'coworkersimpaqto',
+    'accounts',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -56,7 +59,10 @@ ROOT_URLCONF = 'ImpaQto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+                 os.path.join(BASE_DIR,'coworkersimpaqto/templates').replace('\\','/'),
+                 os.path.join(BASE_DIR,'accounts/templates').replace('\\','/')
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -64,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.core.context_processors.request',
             ],
         },
     },
@@ -78,11 +85,11 @@ WSGI_APPLICATION = 'ImpaQto.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'impaqto',
-        'USER': 'impaqto',
-        'PASSWORD': 'impaqto',
-        'HOST': '',
-        'PORT': '',
+        'NAME': 'impaqto_2',
+        'USER': 'postgres',
+        'PASSWORD': 'vime2014',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 
@@ -90,9 +97,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC-5'
 
 USE_I18N = True
 
@@ -105,3 +112,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+                    os.path.join(BASE_DIR,'static').replace('\\','/'),
+)
+
+
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\','/')
+MEDIA_URL = '/media/'
