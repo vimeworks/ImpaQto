@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/font-awesome/css/font-awesome.css' %}" >
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/animate.css' %}" >
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/style.css' %}" >
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/css/plugins/datapicker/datepicker3.css' %}" />
     {% block extrastyle %}{% endblock %}
     {% block extrahead %}{% endblock %}
 
@@ -61,8 +62,12 @@
 
     <!-- Peity -->
     <script type="text/javascript" src="{% static 'bootstrap/js/plugins/peity/jquery.peity.min.js' %}"></script>
+    
     <!-- Peity demo -->
     <script type="text/javascript" src="{% static 'bootstrap/js/demo/peity-demo.js' %}"></script>
+    
+    <!-- Data picker -->
+    <script type="text/javascript" src="{% static 'bootstrap/js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
     
     {% block scriptextra %}
     

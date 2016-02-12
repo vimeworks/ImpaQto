@@ -1,6 +1,6 @@
 {% extends "coworkersimpaqto/menu.html" %}
 {% load staticfiles %}
-{% block title %}Registro del Coworker{% endblock %}
+{% block title %}Registro Venta Membresia{% endblock %}
 {% block extrastyle %}
 
 {% endblock %}
@@ -11,13 +11,13 @@
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Registro Coworker</h5>
+                            <h5>Registro Venta de Membresia</h5>
                         </div>
                         <div class="ibox-content">
                             <form method="post" action="" enctype="multipart/form-data" class="form-horizontal">
                                 {% csrf_token %}
                                 {{ form.as_p }}
-                                <a href="{% url 'coworker.listado' %}"  class="btn btn btn-white">Cancelar</a >
+                                <a href="{% url 'contrato.listado' %}"  class="btn btn btn-white">Cancelar</a >
                                 <button type="submit" class="btn btn-primary">Registrar</button>
                             </form>
                         </div>
@@ -28,5 +28,18 @@
     </div>
 {% endblock %}
 {% block scriptextra %}
+<script>
+    $(function() {
+    $( "#datepicker" ).datepicker({
+        todayBtn: "linked",
+        keyboardNavigation: false,
+        forceParse: false,
+        calendarWeeks: true,
+        autoclose: true,
+        format: "yyyy-mm-dd",
+
+    });
+  });
+</script>
     
 {% endblock %}

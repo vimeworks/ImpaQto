@@ -11,26 +11,30 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Coworkers Registrados</h5>
+                        <h5>Membresias vendidas</h5>
                     </div>
                     <div class="ibox-content">
-                         <a href="{% url 'coworker.registro' %}"  class="btn btn-primary ">Adicionar Coworker</a >
+                         <a href="{% url 'contrato.registro' %}"  class="btn btn-primary ">Vender Membresia</a >
                         <input type="text" class="form-control input-sm m-b-xs" id="filter"
                                    placeholder="Buscar en la tabla">
                         <table class="footable table table-stripped" data-page-size="8" data-filter=#filter>
                             <thead>
                                 <tr>
-                                    <th>Apellido, Nombre</th>
-                                    <th>E-mail</th>
-                                    <th>Action</th>
+                                    <th>Nombre del Plan</th>
+                                    <th>Coworker</th>
+                                    <th>Fecha Contrato</th>
+                                    <th>Estado</th>
+                                    <th>Opciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if coworkers %}
-                                    {% for coworker in coworkers %}
+                                {% if contratos %}
+                                    {% for contrato in contratos %}
                                         <tr class="gradeX">
-                                            <td> {{ coworker.apellido}}, {{coworker.nombre}} </td>
-                                            <td> {{ coworker.mail }} </td>
+                                            <td> {{ contrato.membresia.nombre }}</td>
+                                            <td> {{ contrato.coworker.apellido }}, {{ contrato.coworker.nombre }} </td>
+                                            <td> {{ contrato.fecha_inicio }} </td>
+                                            <td> {{ contrato.get_estado_display }} </td>
                                             <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
                                         </tr>
                                     {% endfor %}

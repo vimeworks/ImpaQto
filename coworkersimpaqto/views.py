@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from .models import Coworker
+from .models import Coworker, Membresia, Contrato
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from .forms import RegistroCoworkerForm
+from .forms import RegistroCoworkerForm, RegistroMembresiaForm, RegistroContratosForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
@@ -29,6 +29,12 @@ def coworker(request):
         #return render(request,'accounts/login.html',{'mensaje':mensaje})
 
 @login_required
+def list_membresia_view(request):
+    membresia = Membresia.objects.all()
+    context = {'membresias':membresia}
+    return render(request,'coworkersimpaqto/membresialist.html',context)
+
+@login_required
 def registro_coworker_view(request):
     if request.method == 'POST':
         form = RegistroCoworkerForm(request.POST)
@@ -47,3 +53,45 @@ def registro_coworker_view(request):
         form = RegistroCoworkerForm()
     context = {'form' : form}
     return render(request,'coworkersimpaqto/registroCoworker.html',context)
+
+@login_required 
+def registro_membresia_view(request):
+    if request.method == 'POST':
+        form = RegistroMembresiaForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            nombre = cleaned_data.get('nombre')
+            uso_espacio = cleaned_data.get('uso_espacio')
+            modalidad = cleaned_data.get('modalidad')
+            estado = cleaned_data.get('estado')
+            membresia_model =  Membresia.objects.create(nombre=nombre,uso_espacio=uso_espacio,modalidad=modalidad,estado=estado)
+            membresia_model.save()
+            return redirect(reverse('membresia.listado'))
+    else:
+        form = RegistroMembresiaForm()
+    context = {'form' : form}
+    return render(request,'coworkersimpaqto/registroMembresia.html',context)
+
+@login_required
+def list_contratos_view(request):
+    contrato = Contrato.objects.all()
+    context = {'contratos':contrato}
+    return render(request,'coworkersimpaqto/contratoList.html',context)
+
+@login_required
+def registro_contrato_membresia_view(request):
+    if request.method == 'POST':
+        form = RegistroContratosForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            coworker = cleaned_data.get('coworker')
+            membresia =  cleaned_data.get('membresia')
+            fecha_inicio = cleaned_data.get('fecha_inicio')
+            estado = cleaned_data.get('estado')
+            contrato_model = Contrato.objects.create(coworker=coworker,membresia=membresia,fecha_inicio=fecha_inicio,estado=estado)
+            contrato_model.save()
+            return redirect(reverse('contrato.listado'))
+    else:
+        form = RegistroContratosForm()
+    context = {'form' : form}
+    return render(request,'coworkersimpaqto/registroContrato.html',context)

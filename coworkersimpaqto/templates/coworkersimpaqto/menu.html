@@ -10,15 +10,17 @@
     <div class="navbar-collapse collapse" id="navbar">
         <ul class="nav navbar-nav">                  
             <li class="dropdown">
-                <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Coworkers <span class="caret"></span></a>
+                <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Administración General <span class="caret"></span></a>
                 <ul role="menu" class="dropdown-menu">
-                    <li><a href="{% url 'coworker.listado' %}">Listado</a></li>
+                    <li><a href="{% url 'coworker.listado' %}">Coworkers</a></li>
+                    <li><a href="{% url 'membresia.listado' %}">Membresias</a></li>
+                    <li><a href="{% url 'contrato.listado' %}">Membresias Vendidas</a></li>
                 </ul>
             </li>
             <li class="dropdown">
-                <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Usuarios del Sistema <span class="caret"></span></a>
+                <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> Sistema <span class="caret"></span></a>
                 <ul role="menu" class="dropdown-menu">
-                    <li><a href="{% url 'accounts.listado.userprofile' %}">Listado</a></li>
+                    <li><a href="{% url 'accounts.listado.userprofile' %}">Usuarios</a></li>
                 </ul>
             </li>
 
