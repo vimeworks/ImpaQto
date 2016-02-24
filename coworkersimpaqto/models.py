@@ -1,4 +1,5 @@
 from django.db import models
+from django.template.defaultfilters import default
 
 # Create your models here.
 
@@ -53,6 +54,7 @@ class Contrato(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField(null=True,blank=True)
     estado = models.CharField("Estado del contrato",max_length=1,choices=ESTADO_CHOICES,default=ACTIVO)
+    tiempo_sobrante = models.DecimalField(decimal_places=2,max_digits=10,null=True,blank=True)
 
     def __str__(self):
         return '%s %s'%(self.coworker,self.membresia)
@@ -60,3 +62,21 @@ class Contrato(models.Model):
     class Meta:
         order_with_respect_to = 'coworker'
         verbose_name_plural="Planes - Coworker's"
+
+class Consumo(models.Model):
+    ENTRADA ='E'
+    SALIDA = 'S'
+    REGISTRO_CHOICES=(
+                      (ENTRADA,'Entrada'),
+                      (SALIDA,'Salida'),
+    )
+    contrato = models.ForeignKey(Contrato,verbose_name="Contrato a elegir")
+    estado_registro = models.CharField("Registro de ",max_length=1,choices = REGISTRO_CHOICES,default=ENTRADA)
+    fecha_entrada = models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    fecha_salida = models.DateTimeField(null=True,blank=True)
+    
+    def __str__(self):
+        return '%s '%(self.contrato)
+    class Meta:
+        ordering = ["fecha_entrada"]
+        verbose_name_plural = "Asistencia"

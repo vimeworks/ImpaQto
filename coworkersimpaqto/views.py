@@ -1,3 +1,7 @@
+from django.http import HttpResponse
+#from django.views.decorators.csrf import csrf_exempt
+#from .serializers import ContratoSerializer, CoworkerSerializer
+#from rest_framework import viewsets
 from django.shortcuts import render
 from .models import Coworker, Membresia, Contrato
 from django.contrib.auth.models import User
@@ -95,3 +99,28 @@ def registro_contrato_membresia_view(request):
         form = RegistroContratosForm()
     context = {'form' : form}
     return render(request,'coworkersimpaqto/registroContrato.html',context)
+
+'''
+class ContratoViewSet(viewsets.ModelViewSet):
+    queryset = Contrato.objects.all()
+    serializer_class = ContratoSerializer
+
+class CoworkerViewSet(viewsets.ModelViewSet):
+    queryset = Coworker.objects.all()
+    serializer_class = CoworkerSerializer
+
+@csrf_exempt
+def ContratoDetailViewSet(request,id):
+    contrato = Contrato.objects.get(id=id)
+    serializer_class = ContratoSerializer(contrato)
+    return serializer_class.data
+    
+@csrf_exempt
+def contrato_detail_view(request,codigo):
+    try:
+        contrato = Contrato.objects.get(id = codigo)
+    except Contrato.DoesNotExist:
+        return HttpResponse(status=404)
+    if request.method == 'GET':
+        serializer = ContratoSerializer(contrato)
+'''

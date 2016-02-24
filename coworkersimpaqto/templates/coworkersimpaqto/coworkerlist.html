@@ -11,7 +11,7 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Coworkers Registrados</h5>
+                        <h5>{{coworkers|length}} Coworker{{coworkers|pluralize}} Registrado{{coworkers|pluralize}}</h5>
                     </div>
                     <div class="ibox-content">
                          <a href="{% url 'coworker.registro' %}"  class="btn btn-primary ">Adicionar Coworker</a >

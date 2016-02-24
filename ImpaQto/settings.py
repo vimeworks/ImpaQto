@@ -39,8 +39,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'coworkersimpaqto',
     'accounts',
+    'api',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -122,3 +124,9 @@ LOGOUT_URL = '/accounts/logout/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\','/')
 MEDIA_URL = '/media/'
+
+'''
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',),
+    
+}'''
