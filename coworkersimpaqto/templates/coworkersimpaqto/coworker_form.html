@@ -1,0 +1,42 @@
+{% extends "coworkersimpaqto/menu.html" %}
+{% load staticfiles %}
+{% block title %}Edición del Coworker{% endblock %}
+{% block extrastyle %}
+
+{% endblock %}
+{% block containerblock %}
+    <div id="page-wrapper" class="gray-bg">
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Edición Coworker</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <form method="post" action="" enctype="multipart/form-data" class="form-horizontal">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <a href="{% url 'coworker.listado' %}"  class="btn btn btn-white">Cancelar</a >
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scriptextra %}
+    <script type="text/javascript">
+        
+            $(document).ready(function() {
+                 $('#id_nombre').addClass('form-control');
+                 $('#id_apellido').addClass('form-control');
+                 $('#id_mail').addClass('form-control');
+                 $('#id_username').addClass('form-control');
+            });
+        
+    </script>
+{% endblock %}

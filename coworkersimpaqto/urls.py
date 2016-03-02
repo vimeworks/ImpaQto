@@ -16,6 +16,8 @@ urlpatterns = [
     #url(r'^',include(router.urls)),
     url(r'^coworkers/lista/$',views.coworker,name='coworker.listado'),
     url(r'^coworkers/registro/$',views.registro_coworker_view,name='coworker.registro'),
+    url(r'^coworkers/edicion/(?P<pk>\d+)/$',views.editar_dos_coworker,name='coworker.edicion'),
+    #url(r'^coworkers/edicion/(?P<pk>\d+)/$',views.CoworkerUpdate.as_view(),name='coworker.edicion'),
     url(r'^membresias/lista/$',views.list_membresia_view,name='membresia.listado'),
     url(r'^membresias/registro/$',views.registro_membresia_view,name='membresia.registro'),
     url(r'^contrato/lista/$',views.list_contratos_view,name='contrato.listado'),

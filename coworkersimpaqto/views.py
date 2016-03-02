@@ -6,11 +6,26 @@ from django.shortcuts import render
 from .models import Coworker, Membresia, Contrato
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from .forms import RegistroCoworkerForm, RegistroMembresiaForm, RegistroContratosForm
+from .forms import RegistroCoworkerForm, RegistroMembresiaForm, RegistroContratosForm, EditarCoworkerForm,CoworkerEForm
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
-from django.core.urlresolvers import reverse
+from django.shortcuts import redirect, get_object_or_404
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.template.context import RequestContext
 
+from django.views.generic import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import (
+   CreateView,
+   UpdateView,
+   DeleteView
+)
+from django import forms
+
+class CoworkerUpdate(UpdateView):
+    model = Coworker
+    form_class=EditarCoworkerForm
+    success_url = reverse_lazy('coworker.listado')
+    #fields = ['nombre', 'apellido', 'mail', 'username']
 
 
 # Create your views here.
@@ -100,27 +115,64 @@ def registro_contrato_membresia_view(request):
     context = {'form' : form}
     return render(request,'coworkersimpaqto/registroContrato.html',context)
 
-'''
-class ContratoViewSet(viewsets.ModelViewSet):
-    queryset = Contrato.objects.all()
-    serializer_class = ContratoSerializer
-
-class CoworkerViewSet(viewsets.ModelViewSet):
-    queryset = Coworker.objects.all()
-    serializer_class = CoworkerSerializer
-
-@csrf_exempt
-def ContratoDetailViewSet(request,id):
-    contrato = Contrato.objects.get(id=id)
-    serializer_class = ContratoSerializer(contrato)
-    return serializer_class.data
+@login_required
+def editar_coworker(request,pk=None):
+    #if request.coworker is None:
+    coworker = Coworker.objects.filter(pk=pk)
+    request.coworker = coworker
     
-@csrf_exempt
-def contrato_detail_view(request,codigo):
-    try:
-        contrato = Contrato.objects.get(id = codigo)
-    except Contrato.DoesNotExist:
-        return HttpResponse(status=404)
-    if request.method == 'GET':
-        serializer = ContratoSerializer(contrato)
-'''
+    if request.method == 'POST':
+        form = CoworkerEForm(request.POST)
+        if form.is_valid():
+            '''request.coworker.nombre = form.cleaned_data['nombre']
+            request.coworker.apellido = form.cleaned_data['apellido']
+            request.coworker.mail = form.cleaned_data['mail']
+            request.coworker.username = form.cleaned_data['username']
+            request.coworker.save()'''
+            cleaned_data = form.cleaned_data
+            coworker.nombre = cleaned_data.get('nombre')
+            coworker.save()
+            return redirect (reverse('coworker.listado'))
+    else:
+        coworker = Coworker.objects.filter(pk=3)
+        request.coworker = coworker #EditarCoworkerForm(request=request)
+        form = CoworkerEForm(request=request,instance=coworker)
+                                  #initial={'nombre':request.coworker.nombre,'apellido':request.coworker.apellido,'mail':request.coworker.mail,'username':request.coworker.username}
+                                  #)
+    return render(request, 'coworkersimpaqto/editarCoworker.html',{'form' : form})
+
+
+@login_required
+def editar_dos_coworker(request,pk=None):
+    #if request.coworker is None:
+    coworker = get_object_or_404(Coworker,id=pk)
+    request.coworker = coworker
+    doce=''
+    if request.method == 'POST':
+        form = EditarCoworkerForm(request.POST)
+        if form.is_valid():
+            '''coworker.nombre = form.cleaned_data['nombre']
+            coworker.apellido = form.cleaned_data['apellido']
+            coworker.mail = form.cleaned_data['mail']
+            coworker.username = form.cleaned_data['username']
+            coworker.save()'''
+            coworker = get_object_or_404(Coworker,id=pk)
+            cleaned_data = form.cleaned_data
+            coworker.nombre = cleaned_data.get('nombre')
+            coworker.apellido = cleaned_data.get('apellido')
+            coworker.mail = cleaned_data.get('mail')
+            coworker.username = cleaned_data.get('username')
+            coworker.save()
+            return redirect (reverse('coworker.listado'))
+    else:
+        coworker =get_object_or_404(Coworker,id=pk) #Coworker.objects.filter(pk=3)
+        request.coworker = coworker #EditarCoworkerForm(request=request)
+        doce='uno'
+        if coworker:
+            doce=pk
+            form = EditarCoworkerForm(request.POST or None,initial={'id':request.coworker.id,'nombre':request.coworker.nombre,'apellido':request.coworker.apellido,'mail':request.coworker.mail,'username':request.coworker.username})
+        else:
+            doce='dos'
+            form = CoworkerEForm(request.POST or None)                      #initial={'nombre':request.coworker.nombre,'apellido':request.coworker.apellido,'mail':request.coworker.mail,'username':request.coworker.username}
+                                  #)
+    return render(request, 'coworkersimpaqto/editarCoworker.html',{'form' : form,'coworker':coworker,'doce':doce})

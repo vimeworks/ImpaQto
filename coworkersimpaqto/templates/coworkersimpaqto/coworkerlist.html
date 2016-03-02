@@ -17,7 +17,7 @@
                          <a href="{% url 'coworker.registro' %}"  class="btn btn-primary ">Adicionar Coworker</a >
                         <input type="text" class="form-control input-sm m-b-xs" id="filter"
                                    placeholder="Buscar en la tabla">
-                        <table class="footable table table-stripped" data-page-size="8" data-filter=#filter>
+                        <table class="footable table table-stripped" data-page-size="7" data-filter=#filter>
                             <thead>
                                 <tr>
                                     <th>Apellido, Nombre</th>
@@ -31,7 +31,7 @@
                                         <tr class="gradeX">
                                             <td> {{ coworker.apellido}}, {{coworker.nombre}} </td>
                                             <td> {{ coworker.mail }} </td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
+                                            <td><a href="{% url 'coworker.edicion' coworker.id %}"><i class="fa fa-check text-navy"></i></a></td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}
