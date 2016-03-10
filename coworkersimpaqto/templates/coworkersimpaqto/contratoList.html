@@ -35,7 +35,7 @@
                                             <td> {{ contrato.coworker.apellido }}, {{ contrato.coworker.nombre }} </td>
                                             <td> {{ contrato.fecha_inicio }} </td>
                                             <td> {{ contrato.get_estado_display }} </td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
+                                            <td><a href="{% url 'contrato.edicion' contrato.id %}"><i class="fa fa-check text-navy"></i></a></td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}

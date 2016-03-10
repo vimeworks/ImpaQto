@@ -1,16 +1,18 @@
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 #from django.views.decorators.csrf import csrf_exempt
 #from .serializers import ContratoSerializer, CoworkerSerializer
 #from rest_framework import viewsets
 from django.shortcuts import render
-from .models import Coworker, Membresia, Contrato
+from .models import Coworker, Membresia, Contrato, ControlConsumo
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from .forms import RegistroCoworkerForm, RegistroMembresiaForm, RegistroContratosForm, EditarCoworkerForm,CoworkerEForm
+from .forms import RegistroCoworkerForm, RegistroMembresiaForm, RegistroContratosForm, EditarCoworkerForm,CoworkerEForm,EdicionMembresiaForm,EditarContratosForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, get_object_or_404
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.template.context import RequestContext
+from django.db.models import  Sum
+
 
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
@@ -107,7 +109,8 @@ def registro_contrato_membresia_view(request):
             membresia =  cleaned_data.get('membresia')
             fecha_inicio = cleaned_data.get('fecha_inicio')
             estado = cleaned_data.get('estado')
-            contrato_model = Contrato.objects.create(coworker=coworker,membresia=membresia,fecha_inicio=fecha_inicio,estado=estado)
+            minutos_mes= 60 * membresia.uso_espacio
+            contrato_model = Contrato.objects.create(coworker=coworker,membresia=membresia,fecha_inicio=fecha_inicio,estado=estado,minutos_mes=minutos_mes)
             contrato_model.save()
             return redirect(reverse('contrato.listado'))
     else:
@@ -115,49 +118,19 @@ def registro_contrato_membresia_view(request):
     context = {'form' : form}
     return render(request,'coworkersimpaqto/registroContrato.html',context)
 
-@login_required
-def editar_coworker(request,pk=None):
-    #if request.coworker is None:
-    coworker = Coworker.objects.filter(pk=pk)
-    request.coworker = coworker
-    
-    if request.method == 'POST':
-        form = CoworkerEForm(request.POST)
-        if form.is_valid():
-            '''request.coworker.nombre = form.cleaned_data['nombre']
-            request.coworker.apellido = form.cleaned_data['apellido']
-            request.coworker.mail = form.cleaned_data['mail']
-            request.coworker.username = form.cleaned_data['username']
-            request.coworker.save()'''
-            cleaned_data = form.cleaned_data
-            coworker.nombre = cleaned_data.get('nombre')
-            coworker.save()
-            return redirect (reverse('coworker.listado'))
-    else:
-        coworker = Coworker.objects.filter(pk=3)
-        request.coworker = coworker #EditarCoworkerForm(request=request)
-        form = CoworkerEForm(request=request,instance=coworker)
-                                  #initial={'nombre':request.coworker.nombre,'apellido':request.coworker.apellido,'mail':request.coworker.mail,'username':request.coworker.username}
-                                  #)
-    return render(request, 'coworkersimpaqto/editarCoworker.html',{'form' : form})
-
 
 @login_required
 def editar_dos_coworker(request,pk=None):
     #if request.coworker is None:
     coworker = get_object_or_404(Coworker,id=pk)
     request.coworker = coworker
-    doce=''
+    
     if request.method == 'POST':
         form = EditarCoworkerForm(request.POST)
         if form.is_valid():
-            '''coworker.nombre = form.cleaned_data['nombre']
-            coworker.apellido = form.cleaned_data['apellido']
-            coworker.mail = form.cleaned_data['mail']
-            coworker.username = form.cleaned_data['username']
-            coworker.save()'''
             coworker = get_object_or_404(Coworker,id=pk)
             cleaned_data = form.cleaned_data
+            coworker.id = cleaned_data.get('id')
             coworker.nombre = cleaned_data.get('nombre')
             coworker.apellido = cleaned_data.get('apellido')
             coworker.mail = cleaned_data.get('mail')
@@ -165,14 +138,69 @@ def editar_dos_coworker(request,pk=None):
             coworker.save()
             return redirect (reverse('coworker.listado'))
     else:
-        coworker =get_object_or_404(Coworker,id=pk) #Coworker.objects.filter(pk=3)
-        request.coworker = coworker #EditarCoworkerForm(request=request)
-        doce='uno'
+        coworker =get_object_or_404(Coworker,id=pk) 
+        request.coworker = coworker 
+        
         if coworker:
-            doce=pk
             form = EditarCoworkerForm(request.POST or None,initial={'id':request.coworker.id,'nombre':request.coworker.nombre,'apellido':request.coworker.apellido,'mail':request.coworker.mail,'username':request.coworker.username})
         else:
-            doce='dos'
-            form = CoworkerEForm(request.POST or None)                      #initial={'nombre':request.coworker.nombre,'apellido':request.coworker.apellido,'mail':request.coworker.mail,'username':request.coworker.username}
-                                  #)
-    return render(request, 'coworkersimpaqto/editarCoworker.html',{'form' : form,'coworker':coworker,'doce':doce})
+            form = EditarCoworkerForm(request.POST or None)
+                                  
+    return render(request, 'coworkersimpaqto/editarCoworker.html',{'form' : form,'coworker':coworker})
+
+@login_required
+def editar_membresia(request,pk=None):
+    membresia = get_object_or_404(Membresia,id=pk)
+    request.membresia=membresia
+    if request.method == 'POST':
+        form = EdicionMembresiaForm(request.POST)
+        if form.is_valid():
+            membresia = get_object_or_404(Membresia,id=pk)
+            cleaned_data = form.cleaned_data
+            #membresia.nombre= cleaned_data.get('nombre')
+            membresia.estado = cleaned_data.get('estado')
+            membresia.save()
+            return redirect (reverse('membresia.listado'))
+    else:
+        membresia =get_object_or_404(Membresia,id=pk) 
+        request.membresia = membresia 
+        
+        if membresia:
+            form = EdicionMembresiaForm(request.POST or None,initial={'nombre':request.membresia.nombre,'uso_espacio':request.membresia.uso_espacio,'modalidad':request.membresia.modalidad,'estado':request.membresia.estado})
+        else:
+            form = EdicionMembresiaForm(request.POST or None)
+                                  
+    return render(request, 'coworkersimpaqto/edicion.html',{'form' : form,'membresia':membresia, 'titulo':'Membresia','retorno':'membresia.listado'})
+
+@login_required
+def editar_contrato(request,pk=None):
+    contrato = get_object_or_404(Contrato,id=pk)
+    request.contrato=contrato
+    if request.method == 'POST':
+        form = EditarContratosForm(request.POST)
+        if form.is_valid():
+            contrato = get_object_or_404(Contrato,id=pk)
+            cleaned_data = form.cleaned_data
+            contrato.estado = cleaned_data.get('estado')
+            contrato.save()
+            return redirect (reverse('contrato.listado'))
+    else:
+        contrato =get_object_or_404(Contrato,id=pk) 
+        request.contrato = contrato 
+        
+        if contrato:
+            form = EditarContratosForm(request.POST or None,initial={'coworker':request.contrato.coworker,'membresia':request.contrato.membresia,'estado':request.contrato.estado,'fecha_inicio':request.contrato.fecha_inicio})
+        else:
+            form = EditarContratosForm(request.POST or None)
+                                  
+    return render(request, 'coworkersimpaqto/edicion.html',{'form' : form,'contrato':contrato, 'titulo':'Contrato','retorno':'contrato.listado'})
+
+@login_required
+def reportes(request):
+    response_data={}
+    response_data['dias']=["1", "2", "3", "4", "5", "6", "7","8","9","10","11","12","13"]
+    response_data['consumo']=[65, 59, 40, 51, 36, 25, 40,50,20,30,45,80,80]
+    meses = ControlConsumo.objects.values('mes','control_minutos').annotate(suma=Sum('control_minutos'))
+    response_data['mes']=meses
+    return JsonResponse(response_data) #HttpResponse(json.dumps(response_data),content_type="application/json")
+

@@ -35,7 +35,7 @@
                                             <td> {{ membresia.uso_espacio }} </td>
                                             <td> {{ membresia.get_modalidad_display }} </td>
                                             <td> {{ membresia.get_estado_display }} </td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
+                                            <td><a href="{% url 'membresia.edicion' membresia.id %}"><i class="fa fa-check text-navy"></i></a></td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}

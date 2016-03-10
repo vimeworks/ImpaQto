@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from coworkersimpaqto.models import Contrato, Coworker, Consumo, Membresia
+from coworkersimpaqto.models import Contrato, Coworker, Consumo, Membresia, ControlConsumo
 
 class MembresiaSerializer(ModelSerializer):
     class Meta:
@@ -16,10 +16,16 @@ class ContratoSerializer(ModelSerializer):
     membresia = MembresiaSerializer(many=False,read_only=True)
     class Meta:
         model = Contrato
-        fields = ('id','fecha_inicio','estado','coworker','tiempo_sobrante','membresia',)
-
-class ConsumoSerializer(ModelSerializer):
+        fields = ('id','fecha_inicio','estado','coworker','minutos_mes','membresia',)
+        
+class ControlConsumoSerializer(ModelSerializer):
     contrato = ContratoSerializer(many=False,read_only=True)
     class Meta:
+        model = ControlConsumo
+        fiels = ('id','mes','anio','control_minutos','contrato')
+
+class ConsumoSerializer(ModelSerializer):
+    control_consumo = ControlConsumoSerializer(many=False,read_only=True)
+    class Meta:
         model = Consumo
-        fields = ('id','contrato','fecha_entrada','fecha_salida','estado_registro','get_estado_registro_display')
+        fields = ('id','control_consumo','fecha_entrada','fecha_salida','estado_registro','get_estado_registro_display')

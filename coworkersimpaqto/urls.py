@@ -20,8 +20,11 @@ urlpatterns = [
     #url(r'^coworkers/edicion/(?P<pk>\d+)/$',views.CoworkerUpdate.as_view(),name='coworker.edicion'),
     url(r'^membresias/lista/$',views.list_membresia_view,name='membresia.listado'),
     url(r'^membresias/registro/$',views.registro_membresia_view,name='membresia.registro'),
+    url(r'^membresias/edicion/(?P<pk>\d+)/$',views.editar_membresia,name='membresia.edicion'),
     url(r'^contrato/lista/$',views.list_contratos_view,name='contrato.listado'),
     url(r'^contrato/registro/$',views.registro_contrato_membresia_view,name='contrato.registro'),
+    url(r'^contrato/edicion/(?P<pk>\d+)/$',views.editar_contrato,name='contrato.edicion'),
+    url(r'^jsonp/$',views.reportes,name='jsonp')
     #url(r'^rest/contrato/(?P<id>[0-9]+)/$',views.ContratoDetailViewSet)
     ##url(r'^contrato/rest/(?P<codigo>[0-9]+)/$',views.contrato_detail_view,name='contrato.rest.identificar'),
 ]

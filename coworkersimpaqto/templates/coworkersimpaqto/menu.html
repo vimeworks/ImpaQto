@@ -27,11 +27,21 @@
         </ul>
         
         <ul class="nav navbar-top-links navbar-right">
-            <li>
-                <a href="{% url 'accounts.logout' %}">
-                    <i class="fa fa-sign-out"></i> Salir
-                </a>
-            </li>
+            
+                {% if user.is_authenticated %}
+                    <li>
+                        <span class="m-r-sm text-muted welcome-message">Bienvenido {{user.username}}</span>
+                    </li>
+                    <li>
+                        <a href="{% url 'accounts.logout' %}">
+                            <i class="fa fa-sign-out"></i> Salir
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <span class="m-r-sm text-muted welcome-message">Bienvenido, nuevo usuario, por favor Ingresa al sistema.</span>
+                    </li>
+                {%endif%}
         </ul>
         
     </div>

@@ -124,6 +124,7 @@ LOGOUT_URL = '/accounts/logout/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\','/')
 MEDIA_URL = '/media/'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 '''
 REST_FRAMEWORK = {

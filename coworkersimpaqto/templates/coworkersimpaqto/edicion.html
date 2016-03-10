@@ -1,6 +1,6 @@
 {% extends "coworkersimpaqto/menu.html" %}
 {% load staticfiles %}
-{% block title %}Edición del Coworker{% endblock %}
+{% block title %}Edición  {{ titulo }}{% endblock %}
 {% block extrastyle %}
 
 {% endblock %}
@@ -11,13 +11,13 @@
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Registro Coworker</h5>
+                            <h5>Edición {{ titulo }}</h5>
                         </div>
                         <div class="ibox-content">
                             <form method="post" action="" enctype="multipart/form-data" class="form-horizontal">
                                 {% csrf_token %}
                                 {{ form.as_p }}
-                                <a href="{% url 'coworker.listado' %}"  class="btn btn btn-white">Cancelar</a >
+                                <a href="{% url retorno %}"  class="btn btn btn-white">Cancelar</a >
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </form>
                             

@@ -6,10 +6,10 @@ from django.template.defaultfilters import default
 
 class Membresia(models.Model):
     MODALIDAD_CHOICES=(
-        ('D','Diario'),
+        #('D','Diario'),
         ('M','Mensual'),
-        ('S','Semestral'),
-        ('A','Anual'),
+        #('S','Semestral'),
+        #('A','Anual'),
     )
     STATE_CHOICES=(
         ('A','Activo'),
@@ -55,7 +55,7 @@ class Contrato(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField(null=True,blank=True)
     estado = models.CharField("Estado del contrato",max_length=1,choices=ESTADO_CHOICES,default=ACTIVO)
-    tiempo_sobrante = models.DecimalField(decimal_places=2,max_digits=10,null=True,blank=True)
+    minutos_mes = models.DecimalField(decimal_places=2,max_digits=10,null=True,blank=True)
 
     def __str__(self):
         return '%s %s'%(self.coworker,self.membresia)
@@ -64,6 +64,20 @@ class Contrato(models.Model):
         order_with_respect_to = 'coworker'
         verbose_name_plural="Planes - Coworker's"
 
+
+class ControlConsumo(models.Model):
+    mes = models.IntegerField()
+    anio = models.IntegerField("Año")
+    control_minutos = models.DecimalField(decimal_places=2,max_digits=10,null=True,blank=True)
+    contrato = models.ForeignKey(Contrato,verbose_name="Contrato a elegir")
+    
+    def __str__(self):
+        return 'En %s del % '%(self.mes,self.anio)
+    class Meta:
+        ordering = ["anio"]
+        verbose_name_plural = "Resumen del Consumo"
+
+
 class Consumo(models.Model):
     ENTRADA ='E'
     SALIDA = 'S'
@@ -71,13 +85,15 @@ class Consumo(models.Model):
                       (ENTRADA,'Entrada'),
                       (SALIDA,'Salida'),
     )
-    contrato = models.ForeignKey(Contrato,verbose_name="Contrato a elegir")
     estado_registro = models.CharField("Registro de ",max_length=1,choices = REGISTRO_CHOICES,default=ENTRADA)
     fecha_entrada = models.DateTimeField(auto_now_add=True,null=True,blank=True)
     fecha_salida = models.DateTimeField(null=True,blank=True)
+    minutos = models.DecimalField(decimal_places=2,max_digits=10,null=True,blank=True)
+    control_consumo = models.ForeignKey(ControlConsumo,verbose_name="Control Consumo",null=False,blank=False)
     
     def __str__(self):
         return '%s '%(self.contrato)
     class Meta:
         ordering = ["fecha_entrada"]
         verbose_name_plural = "Asistencia"
+
