@@ -3,7 +3,7 @@ from django.http import HttpResponse,JsonResponse
 #from .serializers import ContratoSerializer, CoworkerSerializer
 #from rest_framework import viewsets
 from django.shortcuts import render
-from .models import Coworker, Membresia, Contrato, ControlConsumo
+from .models import Coworker, Membresia, Contrato, ControlConsumo, Consumo
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from .forms import RegistroCoworkerForm, RegistroMembresiaForm, RegistroContratosForm, EditarCoworkerForm,CoworkerEForm,EdicionMembresiaForm,EditarContratosForm
@@ -12,6 +12,9 @@ from django.shortcuts import redirect, get_object_or_404
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.template.context import RequestContext
 from django.db.models import  Sum
+from datetime import timezone,timedelta
+import datetime
+
 
 
 from django.views.generic import ListView
@@ -22,6 +25,7 @@ from django.views.generic.edit import (
    DeleteView
 )
 from django import forms
+from _decimal import Decimal
 
 class CoworkerUpdate(UpdateView):
     model = Coworker
@@ -34,8 +38,11 @@ class CoworkerUpdate(UpdateView):
 
 @login_required
 def index(request):
+    fecha = datetime.datetime.now(timezone.utc)
     nombre = request.user.username
-    context={'nombre':nombre}
+    consumos = Consumo.objects.select_related().filter(fecha_entrada__year=fecha.year,fecha_entrada__month = fecha.month).order_by("-id")
+    consumosanual = Consumo.objects.select_related().filter(fecha_entrada__year=fecha.year).order_by("-id")
+    context={'nombre':nombre,'consumos':consumos,'anual':consumosanual}
     return render(request,'coworkersimpaqto/index.html',context)
 
 @login_required
@@ -197,10 +204,28 @@ def editar_contrato(request,pk=None):
 
 @login_required
 def reportes(request):
+    fecha = datetime.datetime.now(timezone.utc)
+    formato_fecha = "%d-%m-%Y"
     response_data={}
+    meses_array=[]
+    minutos_array=[]
+    dias_array=[]
     response_data['dias']=["1", "2", "3", "4", "5", "6", "7","8","9","10","11","12","13"]
     response_data['consumo']=[65, 59, 40, 51, 36, 25, 40,50,20,30,45,80,80]
-    meses = ControlConsumo.objects.values('mes','control_minutos').annotate(suma=Sum('control_minutos'))
-    response_data['mes']=meses
+    meses = ControlConsumo.objects.values('mes').annotate(suma=Sum('control_minutos')).order_by("mes")
+    #dias = Consumo.objects.filter(fecha_entrada__month=fecha.month).values(fecha_entrada.strftime(formato_fecha)).annotate(suma=Sum('minutos'))
+    #dias = Consumo.objects.filter(fecha_entrada__month=fecha.month).values('fecha_entrada__date').annotate(suma=Sum('minutos'))
+    
+    if meses:
+        for m in meses:
+            meses_array.append(m["mes"])
+            minutos_array.append(m["suma"])
+    #if dias:
+     #   for d in dias:
+      #      dias_array.append(m["fecha_entrada"])
+            
+    response_data['mes']=meses_array
+    response_data['minutos_mes']=minutos_array
+    #response_data['dias_m'] = dias
     return JsonResponse(response_data) #HttpResponse(json.dumps(response_data),content_type="application/json")
 

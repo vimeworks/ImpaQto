@@ -92,7 +92,7 @@ class Consumo(models.Model):
     control_consumo = models.ForeignKey(ControlConsumo,verbose_name="Control Consumo",null=False,blank=False)
     
     def __str__(self):
-        return '%s '%(self.contrato)
+        return '%s '%(self.control_consumo)
     class Meta:
         ordering = ["fecha_entrada"]
         verbose_name_plural = "Asistencia"
