@@ -13,28 +13,29 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.template.context import RequestContext
 from django.db.models import  Sum
 from datetime import timezone,timedelta
+from django.views.defaults import page_not_found, server_error, permission_denied, bad_request
 import datetime
 
 
 
-from django.views.generic import ListView
-from django.views.generic.detail import DetailView
+#from django.views.generic import ListView
+#from django.views.generic.detail import DetailView
 from django.views.generic.edit import (
-   CreateView,
+   #CreateView,
    UpdateView,
-   DeleteView
+   #DeleteView
 )
-from django import forms
+#from django import forms
 from _decimal import Decimal
 
 class CoworkerUpdate(UpdateView):
     model = Coworker
     form_class=EditarCoworkerForm
     success_url = reverse_lazy('coworker.listado')
-    #fields = ['nombre', 'apellido', 'mail', 'username']
 
 
-# Create your views here.
+
+
 
 @login_required
 def index(request):
@@ -47,14 +48,11 @@ def index(request):
 
 @login_required
 def coworker(request):
-    #if user.is_authenticated():
         nombre = request.user.username
         coworker = Coworker.objects.all()
         context={'nombre':nombre, 'coworkers': coworker}
         return render(request,'coworkersimpaqto/coworkerlist.html',context)
-    #else:
-        #mensaje='No esta autenticado:'+request.user.username
-        #return render(request,'accounts/login.html',{'mensaje':mensaje})
+
 
 @login_required
 def list_membresia_view(request):
@@ -164,7 +162,6 @@ def editar_membresia(request,pk=None):
         if form.is_valid():
             membresia = get_object_or_404(Membresia,id=pk)
             cleaned_data = form.cleaned_data
-            #membresia.nombre= cleaned_data.get('nombre')
             membresia.estado = cleaned_data.get('estado')
             membresia.save()
             return redirect (reverse('membresia.listado'))
@@ -196,7 +193,7 @@ def editar_contrato(request,pk=None):
         request.contrato = contrato 
         
         if contrato:
-            form = EditarContratosForm(request.POST or None,initial={'coworker':request.contrato.coworker,'membresia':request.contrato.membresia,'estado':request.contrato.estado,'fecha_inicio':request.contrato.fecha_inicio})
+            form = EditarContratosForm(request.POST or None,initial={'coworker':request.contrato.coworker.nombre+" "+request.contrato.coworker.apellido,'membresia':request.contrato.membresia.nombre,'estado':request.contrato.estado,'fecha_inicio':request.contrato.fecha_inicio})
         else:
             form = EditarContratosForm(request.POST or None)
                                   
@@ -205,27 +202,53 @@ def editar_contrato(request,pk=None):
 @login_required
 def reportes(request):
     fecha = datetime.datetime.now(timezone.utc)
-    formato_fecha = "%d-%m-%Y"
-    response_data={}
-    meses_array=[]
-    minutos_array=[]
-    dias_array=[]
-    response_data['dias']=["1", "2", "3", "4", "5", "6", "7","8","9","10","11","12","13"]
-    response_data['consumo']=[65, 59, 40, 51, 36, 25, 40,50,20,30,45,80,80]
-    meses = ControlConsumo.objects.values('mes').annotate(suma=Sum('control_minutos')).order_by("mes")
-    #dias = Consumo.objects.filter(fecha_entrada__month=fecha.month).values(fecha_entrada.strftime(formato_fecha)).annotate(suma=Sum('minutos'))
-    #dias = Consumo.objects.filter(fecha_entrada__month=fecha.month).values('fecha_entrada__date').annotate(suma=Sum('minutos'))
     
+    formato_fecha = "%d-%m-%Y"
+    primer_dia = datetime.date(day=1,month=fecha.month,year=fecha.year)
+    mes_pasado = primer_dia - timedelta(days=1)
+    
+    response_data={}
+    #meses_array=[]
+    #minutos_array=[]
+    minutos_array_dias=[]
+    dias_array=[]
+    #Para el reporte por mes actualmente no se va a utilizar
+    '''meses = ControlConsumo.objects.values('mes').annotate(suma=Sum('control_minutos')).order_by("mes")
     if meses:
         for m in meses:
             meses_array.append(m["mes"])
             minutos_array.append(m["suma"])
-    #if dias:
-     #   for d in dias:
-      #      dias_array.append(m["fecha_entrada"])
+    response_data['mes']=meses_array'''
+    
+    try:
+        consume_mes=ControlConsumo.objects.filter(mes=fecha.month).values('mes').annotate(suma=Sum('control_minutos'))
+        if consume_mes:
+            for c in consume_mes:
+                response_data['total_horas']=c["suma"]
+    except ControlConsumo.DoesNotExist:
+        response_data['total_horas']=0
+    
+    try:
+        consume_mes_anterior=ControlConsumo.objects.filter(mes=mes_pasado.month).values('mes').annotate(suma=Sum('control_minutos'))
+        if consume_mes_anterior:
+            for c in consume_mes_anterior:
+                response_data['total_horas_pasadas']=c["suma"]
+    except ControlConsumo.DoesNotExist:
+        response_data['total_horas_pasadas']=0
+        
+    dias = Consumo.reporte.resumen_dias(fecha.month,fecha.year)
+    if dias:
+        for d in dias:
+            dias_array.append(d.dia)
+            minutos_array_dias.append(d.resumen_minutos)
             
-    response_data['mes']=meses_array
-    response_data['minutos_mes']=minutos_array
-    #response_data['dias_m'] = dias
-    return JsonResponse(response_data) #HttpResponse(json.dumps(response_data),content_type="application/json")
+    
+    response_data['minutos_dias']=minutos_array_dias
+    response_data['dias'] = dias_array
+    
+    return JsonResponse(response_data)
+
+def mi_error_400(request):
+    nombre_template = '400.html'
+    return bad_request(request, template_name=nombre_template)
 

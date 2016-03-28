@@ -77,6 +77,25 @@ class ControlConsumo(models.Model):
         ordering = ["anio"]
         verbose_name_plural = "Resumen del Consumo"
 
+class ManejadorConsumo(models.Manager):
+    def resumen_dias(self,mes,anio):
+        from django.db import connection
+        cursor = connection.cursor()
+        cursor.execute("""
+            SELECT date_part('day',c.fecha_entrada) as day, SUM(c.minutos) as minutos
+            FROM coworkersimpaqto_consumo c
+            WHERE date_part('month', c.fecha_entrada) = %s
+            AND date_part('year', c.fecha_entrada) = %s
+            GROUP BY day
+            ORDER BY day""",[mes,anio])
+        lista_resultados =[]
+        for row in cursor.fetchall():
+            p =self.model(minutos=row[1])
+            p.dia = row[0]
+            p.resumen_minutos = row[1]
+            lista_resultados.append(p)
+        return lista_resultados
+    
 
 class Consumo(models.Model):
     ENTRADA ='E'
@@ -90,6 +109,9 @@ class Consumo(models.Model):
     fecha_salida = models.DateTimeField(null=True,blank=True)
     minutos = models.DecimalField(decimal_places=2,max_digits=10,null=True,blank=True)
     control_consumo = models.ForeignKey(ControlConsumo,verbose_name="Control Consumo",null=False,blank=False)
+    
+    objects = models.Manager()
+    reporte = ManejadorConsumo()
     
     def __str__(self):
         return '%s '%(self.control_consumo)

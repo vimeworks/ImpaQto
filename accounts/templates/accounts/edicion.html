@@ -1,0 +1,40 @@
+{% extends "coworkersimpaqto/menu.html" %}
+{% load staticfiles %}
+{% block title %}Edición  {{ titulo }}{% endblock %}
+{% block extrastyle %}
+
+{% endblock %}
+{% block containerblock %}
+    <div id="page-wrapper" class="gray-bg">
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>Edición {{ titulo }}</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <form method="post" action="" enctype="multipart/form-data" class="form-horizontal">
+                                <div class="dropdown profile-element" style="text-align:center!important;">
+                                    <span>
+                                        <img alt="{{userProfile.user.nombre}}" class="img-circle" src="{{ MEDIA_URL }}{{ userProfile.photo}}" width="110px"/>
+                                    </span>
+                                </div>
+                                <br>
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <br>
+                                <a href="{% url retorno %}"  class="btn btn btn-white">Cancelar</a >
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </form>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block scriptextra %}
+    
+{% endblock %}

@@ -30,10 +30,7 @@ class RegistroCoworkerForm(forms.Form):
     
 class RegistroMembresiaForm(forms.Form):
     MODALIDAD_CHOICES=(
-        ('D','Diario'),
         ('M','Mensual'),
-        ('S','Semestral'),
-        ('A','Anual'),
     )
     STATE_CHOICES=(
         ('A','Activo'),
@@ -83,39 +80,20 @@ class EditarCoworkerForm(forms.Form):
     mail = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     username = forms.CharField(min_length=6,
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
-    
-    def __init__(self,*args,**kwargs):
-        return super(EditarCoworkerForm,self).__init__(*args,**kwargs)
-    
-    def clean_id(self):
-        id=self.cleaned_data['id']
-        return id
-   
-    def clean_nombre(self):
-        nombre =  self.cleaned_data['nombre']
-        return nombre
-    
-    def clean_apellido(self):
-        apellido = self.cleaned_data['apellido']
-        return apellido
-    
-    def clean_mail(self):
-        id = self.cleaned_data['id']
-        mail = self.cleaned_data['mail']
-        existe = Coworker.objects.filter(mail=mail).exclude(id=2)
+    def clean(self):
+        id = self.cleaned_data.get('id')
+        nombre = self.cleaned_data.get('nombre')
+        apellido = self.cleaned_data.get('apellido')
+        mail = self.cleaned_data.get('mail')
+        username = self.cleaned_data.get('username')
+        existe = Coworker.objects.filter(mail=mail).exclude(id=id)
         if existe:
             raise forms.ValidationError('Ya existe ese mail en la base de datos.')
-        return mail
-    
-    
-    def clean_username(self):
-        id = self.cleaned_data['id']
-        username = self.cleaned_data['username']
-        existe=Coworker.objects.filter(username=username).exclude(id=2)
-        if existe:
+        existeUsername=Coworker.objects.filter(username=username).exclude(id=id)
+        if existeUsername:
             raise forms.ValidationError('Ya existe ese username en la base de datos.')
-        return username
-    
+        return self.cleaned_data
+        
     
 class CoworkerEForm(ModelForm):
     class Meta:
@@ -126,11 +104,8 @@ class CoworkerEForm(ModelForm):
 class EdicionMembresiaForm(forms.Form):
     model = Membresia
     
-    MODALIDAD_CHOICES=(
-        ('D','Diario'),
+    MODALIDAD_CHOICES=(  
         ('M','Mensual'),
-        ('S','Semestral'),
-        ('A','Anual'),
     )
     STATE_CHOICES=(
         ('A','Activo'),
@@ -166,14 +141,14 @@ class EditarContratosForm(forms.Form):
     ACTIVO='A'
     INACTIVO='I'
     ESTADO_CHOICES=(
-        (ACTIVO,'Permitida'),
+        (ACTIVO,'Permitir'),
         (INACTIVO,'Por definir'),
     )
     coworker = forms.ModelChoiceField(queryset=Coworker.objects.all(),
-                                      widget=forms.Select(attrs={'class': 'form-control m-b','readonly':'readonly'}))
+                                      widget=forms.TextInput(attrs={'class': 'form-control m-b','readonly':'readonly'}))
     membresia = forms.ModelChoiceField(queryset=Membresia.objects.all(),
-                                       widget=forms.Select(attrs={'class': 'form-control m-b','readonly':'readonly'}))
-    estado = forms.ChoiceField(label=u'Utilización de Espacio',choices=ESTADO_CHOICES,
+                                       widget=forms.TextInput(attrs={'class': 'form-control m-b','readonly':'readonly'}))
+    estado = forms.ChoiceField(label=u'Puede Utilizar Espacio:',choices=ESTADO_CHOICES,
                                required=True,
                                widget=forms.Select(attrs={'class': 'form-control m-b'}))
     fecha_inicio = forms.DateField(initial=datetime.date.today(),

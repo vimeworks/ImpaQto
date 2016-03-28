@@ -32,7 +32,7 @@
                                         <tr>
                                             <td> {{ userprofile.user.username}}</td>
                                             <td> {{ userprofile.user.email }} </td>
-                                            <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
+                                            <td><a href="{% url 'accounts.edicion.userprofile' userprofile.id %}"><i class="fa fa-check text-navy"></i></a></td>
                                         </tr>
                                     {% endfor %}
                                 {% else %}

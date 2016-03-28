@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.core.urlresolvers import reverse
-from .forms import RegistroUserForm
+from .forms import RegistroUserForm, EditarUserForm
 from .models import UserProfile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -17,7 +17,7 @@ def index_view(request):
 
 def login_view(request):
     if request.user.is_authenticated():
-        return render(request,'coworkersimpaqto/index.html',{'nombre':username})
+        return render(request,'coworkersimpaqto/index.html')
     mensaje = ''
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -70,3 +70,36 @@ def list_usuarios_view(request):
     userprofiles = UserProfile.objects.all()
     context={'userprofiles': userprofiles}
     return render(request,'accounts/listUser.html',context)
+
+@login_required
+def editar_accounts(request,pk=None):
+    userProfile= get_object_or_404(UserProfile,id=pk)
+    request.userProfile=userProfile
+    if request.method == 'POST':
+        form = EditarUserForm(request.POST)
+        if form.is_valid():
+            userProfile = get_object_or_404(UserProfile,id=pk)
+            cleaned_data = form.cleaned_data
+            password = form.cleaned_data['password']
+            if password:
+                user =  userProfile.user
+                user.set_password(password)
+                user.save();
+            #photo = form.cleaned_data['photo']
+            #if photo:
+             #   userProfile.photo=photo
+              #  userdos= userProfile.user
+               # userdos.username = 'luis'
+                #userdos.save()
+                userProfile.save()
+            return redirect (reverse('accounts.listado.userprofile'))
+    else:
+        userProfile =get_object_or_404(UserProfile,id=pk) 
+        request.userProfile = userProfile 
+        
+        if userProfile:
+            form = EditarUserForm(request.POST or None,initial={'username':request.userProfile.user.username,'email':request.userProfile.user.email,'password':request.userProfile.user.password,'password2':request.userProfile.user.password,'photo':request.userProfile.photo})
+        else:
+            form = EditarUserForm(request.POST or None)
+                                  
+    return render(request, 'accounts/edicion.html',{'form' : form,'userProfile':userProfile, 'titulo':'Editar Usuario','retorno':'accounts.listado.userprofile',})

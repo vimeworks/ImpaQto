@@ -28,3 +28,20 @@ class RegistroUserForm(forms.Form):
         if password != password2:
             raise forms.ValidationError('Las contraseñas no coinciden.')
         return password2
+
+class EditarUserForm(forms.Form):
+    
+    username = forms.CharField(min_length=5,
+                               widget=forms.TextInput(attrs={'class': 'form-control','readonly':'readonly'}))
+    email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control','readonly':'readonly'}))
+    password = forms.CharField(min_length=5,required=False,widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(required=False,widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    #photo = forms.ImageField(required=False)
+    
+    def clean(self):
+        password = self.cleaned_data.get('password')
+        password2 = self.cleaned_data.get('password2')
+        if password or password:  
+            if password != password2:
+                raise forms.ValidationError('Las contraseñas no coinciden.')
+        return self.cleaned_data

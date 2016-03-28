@@ -21,10 +21,10 @@
                                                     <span class="pull-right text-right">
                                                     <small>El valor promedio de consumo para: <strong>ImpaQTO</strong></small>
                                                         <br/>
-                                                        Total De Horas: 162,862
+                                                        Total De Horas: <span id="spHoras">00,00</span>
                                                     </span>
                                         <h3 class="font-bold no-margins">
-                                            Margen de consumo en el mes <span id="spmes"></span>
+                                            Margen de consumo en el mes: <span id="spmes">{% now "F" %}</span>
                                         </h3>
                                         <small>Sales marketing.</small>
                                     </div>
@@ -40,17 +40,17 @@
                                             <div class="col-md-4">
                                                 <ul class="stat-list m-t-lg">
                                                     <li>
-                                                        <h2 class="no-margins">2,346</h2>
-                                                        <small>Total orders in period</small>
+                                                        <h2 id="horasMes" class="no-margins">2,346</h2>
+                                                        <small>Total horas en este periodo</small>
                                                         <div class="progress progress-mini">
-                                                            <div class="progress-bar" style="width: 48%;"></div>
+                                                            <div class="progress-bar" style="width: 100%;"></div>
                                                         </div>
                                                     </li>
                                                     <li>
-                                                        <h2 class="no-margins ">4,422</h2>
-                                                        <small>Orders in last month</small>
+                                                        <h2 id="horasAnterior" class="no-margins ">4,422</h2>
+                                                        <small>Total de horas en el mes anterior</small>
                                                         <div class="progress progress-mini">
-                                                            <div class="progress-bar" style="width: 60%;"></div>
+                                                            <div class="progress-bar" style="width: 0%;"></div>
                                                         </div>
                                                     </li>
                                                 </ul>
@@ -75,7 +75,7 @@
                         <div class="col-lg-4">
                             <div class="ibox float-e-margins">
                                 <div class="ibox-title">
-                                    <span class="label label-warning pull-right">Los datos han cambiado</span>
+                                    <span class="label label-warning pull-right">Información Actual</span>
                                     <h5>Últimas actividades</h5>
                                 {% for consumo in consumos|slice:":3" %}
                                     <div class="ibox-content">
@@ -196,19 +196,20 @@
             $(document).ready(function() {
                 $('.footable').footable();
                 $('.footable2').footable();
-                var labelsp = [];
-                var data_consumo=[];
+                
+                
                 
                 var la=$.getJSON('{% url "jsonp" %}',function(data){
                     
-                    labelsp=data.dias;
-                    console.log(data.dias_m);
-                    data_consumo=data.consumo
-                    mes=data.mes
-                    minutos_mes=data.minutos_mes
+                    
+                    $('#spHoras').html(data.total_horas);
+                    $('#horasMes').html(data.total_horas);
+                    $('#horasAnterior').html(data.total_horas_pasadas);
+                    dias=data.dias
+                    minutos_dias=data.minutos_dias
                     
                     var lineData = {
-                        labels: mes,
+                        labels: dias,
                         datasets: [
                             {
                                 label: "Example dataset",
@@ -221,14 +222,14 @@
                                 data: []
                             },
                             {
-                                label: "Example dataset",
+                                label: "Horas del mes",
                                 fillColor: "rgba(26,179,148,0.5)",
                                 strokeColor: "rgba(26,179,148,0.7)",
                                 pointColor: "rgba(26,179,148,1)",
                                 pointStrokeColor: "#fff",
                                 pointHighlightFill: "#fff",
                                 pointHighlightStroke: "rgba(26,179,148,1)",
-                                data: minutos_mes
+                                data: minutos_dias
                             }
                         ]
                     };
