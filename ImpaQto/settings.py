@@ -14,8 +14,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 from django.conf.global_settings import LOGIN_URL, LOGOUT_URL, MEDIA_ROOT,\
     MEDIA_URL, AUTH_USER_MODEL
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '5#je0k%9@6dgz2r9ul)pwdo&)-=+ke4^4+$nvar%*w%c^8ha8j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG =False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -92,7 +92,7 @@ DATABASES = {
         'NAME': 'impaqto_2',
         'USER': 'postgres',
         'PASSWORD': 'vime2014',
-        'HOST': '127.0.0.1',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -115,12 +115,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+STATIC_ROOT = "/opt/ImpaQto/static/"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
                     os.path.join(BASE_DIR,'static').replace('\\','/'),
 )
-
-
+#STATICFILES_DIRS = ('/opt/ImpaQto/static/',)
 LOGIN_URL = '/accounts/login/'
 LOGOUT_URL = '/accounts/logout/'
 
